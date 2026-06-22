@@ -553,7 +553,7 @@ PgCronLauncherMain(Datum arg)
 
 	/* Establish signal handlers before unblocking signals. */
 	pqsignal(SIGHUP, SignalHandlerForConfigReload);
-	pqsignal(SIGINT, SIG_IGN);
+	pqsignal(SIGINT, PG_SIG_IGN);
 	pqsignal(SIGTERM, die);
 
 	/* We're now ready to receive signals */
@@ -2263,8 +2263,8 @@ ExecuteSqlString(const char *sql)
 		portal = CreatePortal("", true, true);
 		/* Don't display the portal in pg_cursors */
 		portal->visible = false;
-		PortalDefineQuery(portal, NULL, sql, commandTag, plantree_list, NULL);
-		PortalStart(portal, NULL, 0, InvalidSnapshot);
+		PortalDefineQuery(portal, NULL, sql, nodeTag(parsetree->stmt), commandTag, plantree_list, NULL);
+		PortalStart(portal, NULL, 0, InvalidSnapshot, NULL);
 		PortalSetResultFormat(portal, 1, &format);		/* binary format */
 
 		--commands_remaining;
