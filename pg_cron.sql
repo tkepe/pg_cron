@@ -42,6 +42,7 @@ CREATE FUNCTION cron.unschedule(job_id bigint)
 COMMENT ON FUNCTION cron.unschedule(bigint)
     IS 'unschedule a pg_cron job';
 
+/******* GP does not support triggers yet *******
 CREATE FUNCTION cron.job_cache_invalidate()
     RETURNS trigger
     LANGUAGE C
@@ -53,3 +54,4 @@ CREATE TRIGGER cron_job_cache_invalidate
     AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
     ON cron.job
     FOR STATEMENT EXECUTE PROCEDURE cron.job_cache_invalidate();
+*/
