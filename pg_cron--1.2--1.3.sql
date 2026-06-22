@@ -22,9 +22,18 @@ CREATE POLICY cron_job_run_details_policy ON cron.job_run_details USING (usernam
 SELECT pg_catalog.pg_extension_config_dump('cron.job_run_details', '');
 SELECT pg_catalog.pg_extension_config_dump('cron.runid_seq', '');
 
-ALTER TABLE cron.job ADD COLUMN jobname name;
+-- jobname is a text, and in pg_cron--1.4-1--1.5.sql it be alter to type text
+ALTER TABLE cron.job ADD COLUMN jobname text;
 
-CREATE UNIQUE INDEX jobname_username_idx ON cron.job (jobname, username);
+-- Added 'jobid' to fix index constrain in a distributed Postgres
+/*
+ERROR:  UNIQUE index must contain all columns in the table's distribution key
+DETAIL:  Distribution key column "jobid" is not included in the constraint.
+CONTEXT:  SQL statement "CREATE UNIQUE INDEX jobname_username_idx ON cron.job (jobname, username)"
+extension script file "pg_cron--1.2--1.3.sql", near line 27
+*/
+CREATE UNIQUE INDEX jobname_username_idx ON cron.job (jobid, jobname, username);
+
 ALTER TABLE cron.job ADD CONSTRAINT jobname_username_uniq UNIQUE USING INDEX jobname_username_idx;
 
 CREATE FUNCTION cron.schedule(job_name name, schedule text, command text)
