@@ -1,4 +1,5 @@
-ALTER TABLE cron.job ALTER COLUMN jobname TYPE text;
+/* Removed because jobname will be added as text */
+--ALTER TABLE cron.job ALTER COLUMN jobname TYPE text;
 
 DROP FUNCTION cron.unschedule(name);
 CREATE FUNCTION cron.unschedule(job_name text)
